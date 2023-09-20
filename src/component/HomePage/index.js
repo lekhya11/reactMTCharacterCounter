@@ -1,7 +1,8 @@
 import {Component} from 'react'
 
 import {v4 as uuidv4} from 'uuid'
-import NoUserView from '../noUserView'
+
+import DisplayListItems from '../DisplayListItems'
 
 import './index.css'
 
@@ -15,7 +16,8 @@ class HomePage extends Component {
     this.setState({inputElement: event.target.value})
   }
 
-  onAddButton = () => {
+  onAddButton = event => {
+    event.preventDefault()
     const {inputElement} = this.state
     const newChar = {
       id: uuidv4(),
@@ -24,8 +26,33 @@ class HomePage extends Component {
 
     this.setState(prevState => ({
       list: [...prevState.list, newChar],
-      inputElement: ' ',
+      inputElement: '',
     }))
+  }
+
+  renderNoListView = () => {
+    const {list} = this.state
+    return (
+      <div className="container">
+        <h1 className="h1-element">
+          Count the characters like a <br /> Boss...
+        </h1>
+        {list.length === 0 ? (
+          <div>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/no-user-inputs-img.png"
+              alt="no user inputs"
+            />
+          </div>
+        ) : (
+          <ul>
+            {list.map(each => (
+              <DisplayListItems charList={each} key={each.id} />
+            ))}
+          </ul>
+        )}
+      </div>
+    )
   }
 
   render() {
@@ -34,10 +61,10 @@ class HomePage extends Component {
     console.log(list)
     return (
       <div className="white-container">
-        <NoUserView charList={list} />
+        {this.renderNoListView()}
         <div className="input-container">
           <h1>Character counter</h1>
-          <div className="flex-container">
+          <form className="flex-container" onSubmit={this.onAddButton}>
             <input
               className="input-element"
               type="text"
@@ -45,10 +72,10 @@ class HomePage extends Component {
               placeholder="Enter the Characters here"
               onChange={this.onChangeInputValue}
             />
-            <button type="button" className="button" onClick={this.onAddButton}>
+            <button type="submit" className="button">
               Add
             </button>
-          </div>
+          </form>
         </div>
       </div>
     )
